@@ -1,9 +1,9 @@
- -- 1. слой временного хранения копии данных от источника в неизменном виде;
+ -- 1. Г±Г«Г®Г© ГўГ°ГҐГ¬ГҐГ­Г­Г®ГЈГ® ГµГ°Г Г­ГҐГ­ГЁГї ГЄГ®ГЇГЁГЁ Г¤Г Г­Г­Г»Гµ Г®ГІ ГЁГ±ГІГ®Г·Г­ГЁГЄГ  Гў Г­ГҐГЁГ§Г¬ГҐГ­Г­Г®Г¬ ГўГЁГ¤ГҐ ;
 
 CREATE DATABASE stg;
 
 
-USE [stg] -- создаем в слое хранения таблицу [SalesOrderDetail]
+USE [stg] -- Г±Г®Г§Г¤Г ГҐГ¬ Гў Г±Г«Г®ГҐ ГµГ°Г Г­ГҐГ­ГЁГї ГІГ ГЎГ«ГЁГ¶Гі [SalesOrderDetail]
 GO
 
 CREATE TABLE [SalesOrderDetail](
@@ -74,9 +74,9 @@ CREATE TABLE [Product](
 	[ModifiedDate] [datetime] NOT NULL
 	)
 
-	-- переносим исходные данные в слой храннения.
+	-- ГЇГҐГ°ГҐГ­Г®Г±ГЁГ¬ ГЁГ±ГµГ®Г¤Г­Г»ГҐ Г¤Г Г­Г­Г»ГҐ Гў Г±Г«Г®Г© ГµГ°Г Г­Г­ГҐГ­ГЁГї.
 
-	-- заполняем таблицу [SalesOrderDetail] данными за один день
+	-- Г§Г ГЇГ®Г«Г­ГїГҐГ¬ ГІГ ГЎГ«ГЁГ¶Гі [SalesOrderDetail] Г¤Г Г­Г­Г»Г¬ГЁ Г§Г  Г®Г¤ГЁГ­ Г¤ГҐГ­Гј
 INSERT INTO [stg].[dbo].[SalesOrderDetail](
 			[SalesOrderID],
 			[SalesOrderDetailID],
@@ -99,7 +99,7 @@ SELECT     [SalesOrderID],
 		   [ModifiedDate] from [AdventureWorks2019].[Sales].[SalesOrderDetail]
 WHERE	ModifiedDate = (SELECT MAX(ModifiedDate) from [AdventureWorks2019].[Sales].[SalesOrderDetail])
 
--- заполняем таблицу [Product] данными за один день
+-- Г§Г ГЇГ®Г«Г­ГїГҐГ¬ ГІГ ГЎГ«ГЁГ¶Гі [Product] Г¤Г Г­Г­Г»Г¬ГЁ Г§Г  Г®Г¤ГЁГ­ Г¤ГҐГ­Гј
 INSERT INTO [stg].[dbo].[Product]
            ([ProductID]
            ,[Name]
@@ -153,7 +153,7 @@ SELECT		[ProductID]
 FROM		[AdventureWorks2019].[Production].[Product]
 WHERE		ModifiedDate = (SELECT MAX(ModifiedDate) FROM [AdventureWorks2019].[Production].[Product])
 
--- заполняем таблицу [SalesOrderHeader] данными за один день
+-- Г§Г ГЇГ®Г«Г­ГїГҐГ¬ ГІГ ГЎГ«ГЁГ¶Гі [SalesOrderHeader] Г¤Г Г­Г­Г»Г¬ГЁ Г§Г  Г®Г¤ГЁГ­ Г¤ГҐГ­Гј
 INSERT INTO [stg].[dbo].[SalesOrderHeader]
            ([SalesOrderID]
            ,[RevisionNumber]
