@@ -1,11 +1,11 @@
--- 2. слой хранения оперативных данных;
+-- 2. СЃР»РѕР№ С…СЂР°РЅРµРЅРёСЏ РѕРїРµСЂР°С‚РёРІРЅС‹С… РґР°РЅРЅС‹С…;
 
 CREATE DATABASE ods; 
 
 USE [ods]
 GO
 
--- создадим таблицу фактов [FactSales] и  измерений в ods
+-- СЃРѕР·РґР°РґРёРј С‚Р°Р±Р»РёС†Сѓ С„Р°РєС‚РѕРІ [FactSales] Рё  РёР·РјРµСЂРµРЅРёР№ РІ ods
 
 SELECT d.ProductID, 
 		d.SalesOrderID, 
@@ -15,7 +15,7 @@ SELECT d.ProductID,
 		INTO ods.[dbo].[FactSales]
 FROM [stg].[dbo].[SalesOrderDetail] d
 
--- для ежедневного добавления данных в таблицу фактов вставляем в job
+-- РґР»СЏ РµР¶РµРґРЅРµРІРЅРѕРіРѕ РґРѕР±Р°РІР»РµРЅРёСЏ РґР°РЅРЅС‹С… РІ С‚Р°Р±Р»РёС†Сѓ С„Р°РєС‚РѕРІ РІСЃС‚Р°РІР»СЏРµРј РІ job
 INSERT INTO ods.[dbo].[FactSales]
            ([ProductID]
            ,[SalesOrderID]
@@ -29,7 +29,7 @@ SELECT d.ProductID,
 		d.ModifiedDate 
 FROM [stg].[dbo].[SalesOrderDetail] d
 
--- создадим таблицу измерений [DimProduct]
+-- СЃРѕР·РґР°РґРёРј С‚Р°Р±Р»РёС†Сѓ РёР·РјРµСЂРµРЅРёР№ [DimProduct]
 
 CREATE TABLE ods.[dbo].[DimProduct]
            ([ProductID] [int] not null
@@ -37,7 +37,7 @@ CREATE TABLE ods.[dbo].[DimProduct]
            ,[ProductNumber] [nvarchar] (50) not null
            ,[ModifiedDate] [datetime] not null
 		   )
--- вставляем данные
+-- РІСЃС‚Р°РІР»СЏРµРј РґР°РЅРЅС‹Рµ
 INSERT INTO [ods].[dbo].[DimProduct]
            ([ProductID]
            ,[Name]
@@ -50,7 +50,7 @@ select		[ProductID]
            ,[ModifiedDate]
 from [stg].[dbo].[Product]
 
--- -- создадим таблицу измерений [DimOrder]
+-- СЃРѕР·РґР°РґРёРј С‚Р°Р±Р»РёС†Сѓ РёР·РјРµСЂРµРЅРёР№ [DimOrder]
 CREATE TABLE ods.[dbo].[DimOrder]
            ([SalesOrderID] [int] not null
            ,[SalesOrderNumber] [nvarchar] (25) not null
@@ -60,7 +60,7 @@ CREATE TABLE ods.[dbo].[DimOrder]
            ,[ModifiedDate] [datetime] not null
 		   )
 
--- вставляем данные
+-- РІСЃС‚Р°РІР»СЏРµРј РґР°РЅРЅС‹Рµ
 INSERT INTO [ods].[dbo].[DimOrder]
            ([SalesOrderID]
            ,[SalesOrderNumber]
