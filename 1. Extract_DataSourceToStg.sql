@@ -1,9 +1,9 @@
- -- 1. добавим данные из Ods в агрегированном виде (для исключения хранения ненужных данных) в хранилище.;
+ -- 1. слой временного хранения копии данных от источника в неизменном виде;
 
 CREATE DATABASE stg;
 
 
-USE [stg] -- ñîçäàåì â ñëîå õðàíåíèÿ òàáëèöó [SalesOrderDetail]
+USE [stg] -- создаем в слое хранения таблицу [SalesOrderDetail]
 GO
 
 CREATE TABLE [SalesOrderDetail](
@@ -74,9 +74,9 @@ CREATE TABLE [Product](
 	[ModifiedDate] [datetime] NOT NULL
 	)
 
-	-- ïåðåíîñèì èñõîäíûå äàííûå â ñëîé õðàííåíèÿ.
+	-- переносим исходные данные в слой храннения.
 
-	-- çàïîëíÿåì òàáëèöó [SalesOrderDetail] äàííûìè çà îäèí äåíü
+	-- заполняем таблицу [SalesOrderDetail] данными за один день
 INSERT INTO [stg].[dbo].[SalesOrderDetail](
 			[SalesOrderID],
 			[SalesOrderDetailID],
@@ -99,7 +99,7 @@ SELECT     [SalesOrderID],
 		   [ModifiedDate] from [AdventureWorks2019].[Sales].[SalesOrderDetail]
 WHERE	ModifiedDate = (SELECT MAX(ModifiedDate) from [AdventureWorks2019].[Sales].[SalesOrderDetail])
 
--- çàïîëíÿåì òàáëèöó [Product] äàííûìè çà îäèí äåíü
+-- заполняем таблицу [Product] данными за один день
 INSERT INTO [stg].[dbo].[Product]
            ([ProductID]
            ,[Name]
@@ -153,7 +153,7 @@ SELECT		[ProductID]
 FROM		[AdventureWorks2019].[Production].[Product]
 WHERE		ModifiedDate = (SELECT MAX(ModifiedDate) FROM [AdventureWorks2019].[Production].[Product])
 
--- çàïîëíÿåì òàáëèöó [SalesOrderHeader] äàííûìè çà îäèí äåíü
+-- заполняем таблицу [SalesOrderHeader] данными за один день
 INSERT INTO [stg].[dbo].[SalesOrderHeader]
            ([SalesOrderID]
            ,[RevisionNumber]
