@@ -1,18 +1,18 @@
--- 3. добавим данные из Ods в агрегированном виде (для исключения хранения ненужных данных) в хранилище.
-CREATE DATABASE dwh; -- хранилище данных;
+-- 3. РґРѕР±Р°РІРёРј РґР°РЅРЅС‹Рµ РёР· Ods РІ Р°РіСЂРµРіРёСЂРѕРІР°РЅРЅРѕРј РІРёРґРµ (РґР»СЏ РёСЃРєР»СЋС‡РµРЅРёСЏ С…СЂР°РЅРµРЅРёСЏ РЅРµРЅСѓР¶РЅС‹С… РґР°РЅРЅС‹С…) РІ С…СЂР°РЅРёР»РёС‰Рµ.
+CREATE DATABASE dwh; -- ГµГ°Г Г­ГЁГ«ГЁГ№ГҐ Г¤Г Г­Г­Г»Гµ;
 use [dwh]
 
 
--- создаем таблицу фактов FactSales
+-- СЃРѕР·РґР°РµРј С‚Р°Р±Р»РёС†Сѓ С„Р°РєС‚РѕРІ FactSales
 select ProductID, f.SalesOrderID, h.OrderDate, sum(f.OrderQty * f.UnitPrice) as Sum
 into dwh.dbo.FactSales
  from [ods].[dbo].[FactSales] f
  inner join [ods].[dbo].DimOrder h on h.SalesOrderID = f.SalesOrderID
-where 1=2 -- для исключения данных при создании таблицы
+where 1=2 -- Г¤Г«Гї ГЁГ±ГЄГ«ГѕГ·ГҐГ­ГЁГї Г¤Г Г­Г­Г»Гµ ГЇГ°ГЁ Г±Г®Г§Г¤Г Г­ГЁГЁ ГІГ ГЎГ«ГЁГ¶Г»
  group by ProductID, f.SalesOrderID, OrderDate 
 
- -- с помощью функции MERGE добавляем новые данные в хранилище 
- -- добавляем данные в тфблицу фактов FactSales
+ -- СЃ РїРѕРјРѕС‰СЊСЋ С„СѓРЅРєС†РёРё MERGE РґРѕР±Р°РІР»СЏРµРј РЅРѕРІС‹Рµ РґР°РЅРЅС‹Рµ РІ С…СЂР°РЅРёР»РёС‰Рµ 
+ -- РґРѕР±Р°РІР»СЏРµРј РґР°РЅРЅС‹Рµ РІ С‚С„Р±Р»РёС†Сѓ С„Р°РєС‚РѕРІ FactSales
  MERGE dwh.dbo.FactSales AS TARGET
 USING (
 select ProductID, f.SalesOrderID, h.OrderDate, sum(f.OrderQty * f.UnitPrice) as Sum
@@ -29,7 +29,7 @@ WHEN NOT MATCHED THEN
 	INSERT (ProductID, SalesOrderID, OrderDate, Sum)
 	VALUES (SOURCE.ProductID, SOURCE.SalesOrderID, SOURCE.OrderDate, SOURCE.Sum);
 
--- создаем таблицу измерений DimOrder
+-- СЃРѕР·РґР°РµРј С‚Р°Р±Р»РёС†Сѓ РёР·РјРµСЂРµРЅРёР№ DimOrder
 select		[SalesOrderID]
            ,[SalesOrderNumber]
            ,[AccountNumber]
@@ -38,7 +38,7 @@ into dwh.dbo.DimOrder
 from ods.dbo.DimOrder
 where 1=2
 
--- добавляем данные в таблицу измерений DimOrder
+-- РґРѕР±Р°РІР»СЏРµРј РґР°РЅРЅС‹Рµ РІ С‚Р°Р±Р»РёС†Сѓ РёР·РјРµСЂРµРЅРёР№ DimOrder
 MERGE dwh.dbo.DimOrder AS TARGET
 USING (
 select SalesOrderID, 
@@ -56,7 +56,7 @@ WHEN NOT MATCHED THEN
 	INSERT (SalesOrderID, SalesOrderNumber, AccountNumber, CreditCardID)
 	VALUES (SOURCE.SalesOrderID, SOURCE.SalesOrderNumber, SOURCE.AccountNumber, SOURCE.CreditCardID);
 
--- создаем таблицу измерений Product
+-- СЃРѕР·РґР°РµРј С‚Р°Р±Р»РёС†Сѓ РёР·РјРµСЂРµРЅРёР№ Product
 
 select		[ProductID]
            ,[Name]
@@ -65,7 +65,7 @@ into dwh.dbo.DimProduct
 from [ods].[dbo].[DimProduct]
 where 1=2
 
--- добавляем данные в таблицу измерений DimProduct
+-- РґРѕР±Р°РІР»СЏРµРј РґР°РЅРЅС‹Рµ РІ С‚Р°Р±Р»РёС†Сѓ РёР·РјРµСЂРµРЅРёР№ DimProduct
 MERGE dwh.dbo.DimProduct AS TARGET
 USING (
 select ProductID, Name, ProductNumber
@@ -79,7 +79,7 @@ WHEN NOT MATCHED THEN
 	INSERT (ProductID, Name, ProductNumber)
 	VALUES (SOURCE.ProductID, SOURCE.Name, SOURCE.ProductNumber);
 
--- создаем таблицу измерений Date хранящую даты
+-- СЃРѕР·РґР°РµРј С‚Р°Р±Р»РёС†Сѓ РёР·РјРµСЂРµРЅРёР№ Date С…СЂР°РЅСЏС‰СѓСЋ РґР°С‚С‹
 select	DISTINCT OrderDate,
 		YEAR(OrderDate) AS Year,
 		MONTH(OrderDate) AS Month,
@@ -89,7 +89,7 @@ into dwh.dbo.DimDate
 from [ods].[dbo].[DimOrder]
 where 1=2
 
--- добавляем данные в таблицу фактов DimProduct
+-- РґРѕР±Р°РІР»СЏРµРј РґР°РЅРЅС‹Рµ РІ С‚Р°Р±Р»РёС†Сѓ С„Р°РєС‚РѕРІ DimProduct
 MERGE dwh.dbo.DimDate AS TARGET 
 USING (
 select DISTINCT OrderDate,
